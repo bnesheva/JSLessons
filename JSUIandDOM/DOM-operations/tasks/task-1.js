@@ -24,6 +24,11 @@ module.exports = function () {
                     throw new Error(toCheck + ' must be string or number!');
                 };
             },
+            isNotString: function (toCheck) {
+                if (typeof toCheck !== 'string') {
+                    throw new Error(toCheck + ' must be string!');
+                };
+            },
             ifExists: function (toCheck) {
                 if (toCheck === undefined) {
                     throw new Error('Please provide all required parameters');
@@ -50,7 +55,7 @@ module.exports = function () {
         //start validation
         validator.ifExists(element);
         validator.ifExists(contents);
-        validator.isNotStringNorNumber(element);
+        validator.isNotString(element);
         if (!(Array.isArray(contents))) {
             throw new Error('here you need an Array!')
         }
@@ -87,7 +92,7 @@ module.exports = function () {
                 }
             }
             else {
-                throw new Error('Element does not exist in this document!')
+                throw new Error(element + ' element does not exist in this document!')
             }
         };
 

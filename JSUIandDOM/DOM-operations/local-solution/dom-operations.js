@@ -10,6 +10,11 @@ function domOperations(element, contents) {
                 throw new Error(toCheck + ' must be string or number!');
             };
         },
+        isNotString: function (toCheck) {
+            if (typeof toCheck !== 'string') {
+                throw new Error(toCheck + ' must be string!');
+            };
+        },
         ifExists: function (toCheck) {
             if (toCheck === undefined) {
                 throw new Error('Please provide all required parameters');
@@ -36,7 +41,7 @@ function domOperations(element, contents) {
     //start validation
     validator.ifExists(element);
     validator.ifExists(contents);
-    validator.isNotStringNorNumber(element);
+    validator.isNotString(element);
     if (!(Array.isArray(contents))) {
         throw new Error('here you need an Array!')
     }
