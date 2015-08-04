@@ -43,7 +43,7 @@ module.exports = function () {
                 };
             },
             ifTagInDOM: function (toCheck) {
-                console.log(toCheck + ' ' + document.getElementsByTagName(toCheck));
+                //console.log(toCheck + ' ' + document.getElementsByTagName(toCheck));
                 if ((document.getElementsByTagName(toCheck)).length < 1) {
                     return false;
                 }
