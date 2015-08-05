@@ -30,18 +30,18 @@ function solve() {
                 }
             },
             ifNaN: function (toCheck) {
-                if (parseInt(toCheck) === NaN) {
+                if (typeof toCheck !== 'number' || toCheck === NaN) {
                     throw new Error('please provide number')
                 }
             },
             ifLessThan1: function (toCheck) {
-                if (parseInt(toCheck) < 1) {
+                if (toCheck < 1) {
                     throw new Error('number must be more than 1')
                 }
             },
             isString: function (toCheck) {
                 if (typeof toCheck !== 'string') {
-                    throw new Error('this nedds to be string');
+                    throw new Error('this needs to be string');
                 }
             }
         }; 
@@ -54,19 +54,20 @@ function solve() {
         validator.isString(selector);
 
         //
-        if ($(selector)) {
-            ul = $(document.createElement('ul'));
+        
+        ul = $(document.createElement('ul'));
+        ul.addClass('items-list');
 
-            fragment = $(document.createDocumentFragment());
+            var fragment = $(document.createDocumentFragment());
             for (i = 0; i < count; i += 1) {
-                li = $('<li>' + 'List item ' + i + '</li>');
-                fragment.append(li).addClass('list-item');
+                li = $('<li>' + 'List item #' + i + '</li>').addClass('list-item');
+                fragment.append(li);
             }
-            $(selector).append(ul).addClass('items-list');
-            $('.items-list').append(fragment);
-        }
+            $(selector).append(ul);
+            $(fragment).appendTo('.items-list');
+        
 
     };
-};
+}
 
 module.exports = solve;

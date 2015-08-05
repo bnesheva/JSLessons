@@ -6,12 +6,28 @@
 </head>
 <body>
     <div id="root">
+        <a href="#" id="b1" class="button"></a>
+        <a href="#" id="b2" class="button"></a>
+        <br /><div id="c1" class="content">Content</div>
+        <a href="#" id="b3" class="button"></a>
+        <br /><div id="c2" class="content">Content</div>
+        <a href="#" id="b4" class="button"></a>
+        <br /><div id="c3" class="content">Content</div>
+        <a href="#" id="b5" class="button"></a>
+        <a href="#" id="b6" class="button"></a>
+        <br /><div id="c4" class="content">Content</div>
+        <a href="#" id="b7" class="button"></a>
+        <a href="#" id="b8" class="button"></a>
+        <a href="#" id="b9" class="button"></a>
+        <br /><div id="c5" class="content">Content</div>
     </div>
-    <script src="..\node_modules\jquery\dist\jquery.js"></script>
-    <script src="task-1.js"></script>
+
+	<script src="..\node_modules\jquery\dist\jquery.js"></script>
+    <script src="task-2.js"></script>
     <script>
+	var sel = $('#root')
     var func = solve();
-    func(null, 5);
+    func(sel);
     </script>
 </body>
 </html>
