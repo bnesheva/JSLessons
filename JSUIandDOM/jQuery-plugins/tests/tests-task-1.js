@@ -1,4 +1,4 @@
-/*globals describe, it, require, before, global*/
+/*globals describe, it, require, before, global, $*/
 var expect = require('chai').expect;
 var jsdom = require('jsdom');
 var jq = require('jquery');
@@ -24,119 +24,148 @@ describe('Task #1 Tests', function () {
         });
     });
 
-    it('expect to append a list with 5 LIs, when selector is valid and COUNT is 5', function () {
-        var count = 5;
-        document.body.innerHTML = '<div id="root"></div>';
-        result('#root', count);
 
-        var $list = $('#root .items-list');
-        expect($list).to.exist;
-        expect($list).to.have.length(1);
-        var $items = $list.find('*');
-        expect($items).to.have.length(count);
+    it('expect to generate 1 element with class "dropdown-list", put the select inside it and hide it', function () {
+        var id = 'the-select';
+        document.body.innerHTML = '<select id="' + id + '" data-test="test"></select>';
+        result('#' + id);
+        var $dropdownList = $('.dropdown-list');
+        expect($dropdownList).to.have.length(1);
+        var $select = $dropdownList.find('#' + id);
+        expect($select).to.have.length(1);
 
-        $items.each(function (index, item) {
-            var $item = $(item);
-            expect($item.is('li')).to.be.true;
-            expect($item.hasClass('list-item')).to.be.true;
-            expect($item.html()).to.equal('List item #' + index);
+        expect($select.attr('data-test')).to.equal('test');
+        expect($select.css('display')).to.equal('none');
+    });
+
+    it('expect to generate 1 element with class "dropdown-list" that contains the select, and 5 divs with class "dropdown-item"', function () {
+        var id = 'the-select',
+          select = document.createElement('select'),
+          count = 5;
+        select.id = id;
+
+        for (var i = 0; i < count; i += 1) {
+            var option = document.createElement('option');
+            option.innerHTML = 'Option #' + (i + 1);
+            option.value = (i + 1) + '';
+            select.appendChild(option);
+        }
+        document.body.innerHTML = select.outerHTML;
+        result('#' + id);
+        var $dropdown = $('.dropdown-list');
+        var $options = $dropdown.find('.dropdown-item');
+        expect($options).to.have.length(count);
+    });
+
+    it('expect the options to be intially hidden', function () {
+        var id = 'the-select',
+          select = document.createElement('select'),
+          count = 5;
+        select.id = id;
+
+        for (var i = 0; i < count; i += 1) {
+            var option = document.createElement('option');
+            option.innerHTML = 'Option #' + (i + 1);
+            option.value = (i + 1) + '';
+            select.appendChild(option);
+        }
+        document.body.innerHTML = select.outerHTML;
+
+
+        result('#' + id);
+
+
+        var $dropdown = $('.dropdown-list');
+        var $options = $dropdown.find('.dropdown-item');
+
+        $options.each(function (index, option) {
+            var $option = $(option);
+            var $node = $option;
+            while (!($node.hasClass('dropdown-list')) && $node.css('display') !== 'none') {
+                $node = $node.parent();
+            }
+
+            expect($node.hasClass('dropdown-list')).not.to.be.true;
         });
     });
 
-    /* number-convertible */
+    it('expect the options to be visible, when the .current is clicked', function () {
+        var id = 'the-select',
+          select = document.createElement('select'),
+          count = 5;
+        select.id = id;
 
-    it('expect to work, when selector selects nothing', function () {
-        var html = '<div id="root"></div>';
-        document.body.innerHTML = html;
-        result('#THIS_IS_SPARTA', 5);
-        expect(document.body.innerHTML).to.equal(html);
+        for (var i = 0; i < count; i += 1) {
+            var option = document.createElement('option');
+            option.innerHTML = 'Option #' + (i + 1);
+            option.value = (i + 1) + '';
+            select.appendChild(option);
+        }
+        document.body.innerHTML = select.outerHTML;
+
+        result('#' + id);
+
+        var clickEvent = document.createEvent('MouseEvents');
+        clickEvent.initMouseEvent('click', true, true);
+
+        var $dropdown = $('.dropdown-list');
+
+        var $current = $dropdown.find('.current');
+        $current.get(0).dispatchEvent(clickEvent);
+
+        var $options = $dropdown.find('.dropdown-item');
+
+        $options.each(function (index, option) {
+            var $option = $(option);
+            var $node = $option;
+            while (!($node.hasClass('dropdown-list'))) {
+                expect($node.css('display')).not.to.equal('none');
+                $node = $node.parent();
+            }
+        });
     });
 
-    describe('expect to throw', function () {
-        it('when COUNT is equal to 0', function () {
-            function test() {
-                result('#root', 0);
+    it('expect the select to have the selected value and the dropdown to be hidden, when .current is clicked, and then an option is clicked', function () {
+        var id = 'the-select',
+          select = document.createElement('select'),
+          count = 5;
+        select.id = id;
+
+        for (var i = 0; i < count; i += 1) {
+            var option = document.createElement('option');
+            option.innerHTML = 'Option #' + (i + 1);
+            option.value = (i + 1) + '';
+            select.appendChild(option);
+        }
+
+        document.body.innerHTML = select.outerHTML;
+
+        result('#' + id);
+
+        var clickEvent = document.createEvent('MouseEvents');
+        clickEvent.initMouseEvent('click', true, true);
+
+        var $dropdown = $('.dropdown-list');
+
+        var $current = $dropdown.find('.current');
+        $current.get(0).dispatchEvent(clickEvent);
+
+        var clickedOption = $dropdown.find('.dropdown-item').get(Math.floor(count / 2));
+        clickedOption.dispatchEvent(clickEvent);
+
+        expect($('#' + id).val()).to.equal(clickedOption.getAttribute('data-value'));
+
+        var $options = $dropdown.find('.dropdown-item');
+
+        $options.each(function (index, option) {
+            var $option = $(option);
+            var $node = $option;
+            while (!($node.hasClass('dropdown-list')) && $node.css('display') !== 'none') {
+                $node = $node.parent();
             }
-            expect(test).to.throw();
+
+            expect($node.hasClass('dropdown-list')).not.to.be.true;
         });
 
-        it('when COUNT is less than 0', function () {
-            function test() {
-                result('#root', -1);
-            }
-            expect(test).to.throw();
-        });
-
-        it('when COUNT is an object', function () {
-            function test() {
-                result('#root', {});
-            }
-            expect(test).to.throw();
-        });
-
-        it('when COUNT is an array', function () {
-            function test() {
-                result('#root', []);
-            }
-            expect(test).to.throw();
-        });
-
-        it('when COUNT is an empty string', function () {
-            function test() {
-                result('#root', '');
-            }
-            expect(test).to.throw();
-        });
-
-        it('when COUNT is not-a-number string', function () {
-            function test() {
-                result('#root', '123px');
-            }
-            expect(test).to.throw();
-        });
-
-        it('when COUNT is undefined', function () {
-            function test() {
-                result('#root');
-            }
-            expect(test).to.throw();
-        });
-        describe('selector is not a string', function () {
-
-            it('when selector is null', function () {
-                function test() {
-                    result(null, 1);
-                }
-                expect(test).to.throw();
-            });
-
-            it('when selector is undefined', function () {
-                function test() {
-                    result(undefined, 1);
-                }
-                expect(test).to.throw();
-            });
-
-            it('when selector is a number', function () {
-                function test() {
-                    result(3, 1);
-                }
-                expect(test).to.throw();
-            });
-
-            it('when selector is an object', function () {
-                function test() {
-                    result({}, 1);
-                }
-                expect(test).to.throw();
-            });
-
-            it('when selector is an array', function () {
-                function test() {
-                    result([], 1);
-                }
-                expect(test).to.throw();
-            });
-        });
     });
 });
